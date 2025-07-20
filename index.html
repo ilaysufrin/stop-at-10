@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>עצור על 10 שניות!</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- 📘 הוראות + ניקוד אישי — בצד שמאל -->
+    <aside class="instructions">
+      <h2>הוראות המשחק 🎮</h2>
+      <ul>
+        <li>הזן שם והתחל משחק</li>
+        <li>המטרה: לעצור בדיוק על <strong>10.00</strong></li>
+        <li>10.00 שניות = 100 נקודות!</li>
+        <li>10.01 - 10.25 = 50 נקודות!</li>
+        <li>10.26 - 10.50 = 25 נקודות!</li>
+        <li>10.51 - 10.75 = 10 נקודות!</li>
+        <li>מעבר ל־10.75 = ❌ אין ניקוד</li>
+        <li>הניקוד מצטבר! נסו להשיג כמה שיותר נקודות ולהיות ראשונים בטבלה</li>
+      </ul>
+
+      <div class="player-info">
+        <label for="playerName">שם שחקן:</label>
+        <input type="text" id="playerName" placeholder="הכנס שם...">
+      </div>
+
+      <div id="scoreBox">
+        ניקוד: <span id="score">0</span><br>
+        שיא אישי: <span id="highScore">0</span>
+      </div>
+    </aside>
+
+    <!-- 🎮 המשחק במרכז -->
+    <main class="game">
+      <button id="startBtn">התחל משחק ▶️</button>
+      <div id="timer">0.00</div>
+      <button id="stopBtn" disabled>עצור!</button>
+      <div id="result"></div>
+    </main>
+
+    <!-- 🏆 טבלת שחקנים — בצד ימין -->
+    <aside class="leaderboard-box">
+      <h3>🏆 טבלת שחקנים</h3>
+      <ul id="leaderboardList"></ul>
+    </aside>
+
+  </div>
+
+  <script src="index.js" defer></script>
+</body>
+</html>

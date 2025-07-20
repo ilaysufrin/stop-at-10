@@ -1,0 +1,186 @@
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f0f0;
+  direction: rtl;
+}
+
+.container {
+  display: flex;
+  flex-direction: row; /* שמאל -> ימין רגיל */
+  justify-content: space-between;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+/* 🎮 המשחק באמצע */
+.game {
+  text-align: center;
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#timer {
+  font-size: 5em;
+  margin: 20px 0;
+  font-weight: bold;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+#startBtn,
+#stopBtn {
+  font-size: 1.5em;
+  padding: 15px 40px;
+  margin: 10px;
+  background-color: #0078D4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#startBtn:hover,
+#stopBtn:hover {
+  background-color: #005a9e;
+  transform: scale(1.05);
+}
+
+#stopBtn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 2em;
+  min-height: 50px;
+}
+
+/* 📘 הוראות וניקוד אישי — צד שמאל */
+.instructions {
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.instructions h2 {
+  margin-top: 0;
+}
+
+.instructions ul {
+  padding-right: 20px;
+  list-style-type: '✔ ';
+}
+
+.instructions li {
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.player-info {
+  margin-top: 20px;
+}
+.player-info input {
+  width: 100%;
+  padding: 8px;
+  font-size: 1em;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#scoreBox {
+  margin-top: 20px;
+  font-size: 1.2em;
+  background-color: #eaf6ff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* 🏆 טבלה — בצד ימין */
+.leaderboard-box {
+  background-color: #ffffff;
+  padding: 20px 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 250px;
+  flex-shrink: 0;
+  direction: ltr;
+  text-align: left;
+}
+
+.leaderboard-box h3 {
+  margin-top: 0;
+  font-size: 1.2em;
+  color: #0078D4;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.leaderboard-box ul {
+  list-style: none;
+  padding-left: 10px;
+  margin: 0;
+}
+
+.leaderboard-box li {
+  font-size: 0.95em;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+/* אנימציות */
+.success {
+  color: green;
+  animation: pop 0.6s ease;
+}
+.fail {
+  color: red;
+  animation: shake 0.4s ease;
+}
+.score-anim {
+  animation: popScore 0.8s ease;
+}
+.score-mid {
+  animation: popMid 0.6s ease;
+  color: #ffa600;
+}
+.score-low {
+  animation: shake 0.4s ease;
+  color: #999;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+@keyframes popScore {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); color: green; }
+  100% { transform: scale(1); }
+}
+@keyframes popMid {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}

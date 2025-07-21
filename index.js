@@ -1,3 +1,28 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  setDoc,
+  doc,
+  getDoc,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+// Firebase config שלך
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ukAMPGUoiNKr3KoOLOuTdjwsvcCPkBg",
+  authDomain: "stop-at-10-6ead4.firebaseapp.com",
+  projectId: "stop-at-10-6ead4",
+  storageBucket: "stop-at-10-6ead4.firebasestorage.app",
+  messagingSenderId: "569877730994",
+  appId: "1:569877730994:web:162deafdf31832ec1fdbab",
+  measurementId: "G-VP3LQV865Q"
+};
+
+// התחברות ל-Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 document.addEventListener("DOMContentLoaded", () => {
   const timerDisplay = document.getElementById("timer");
   const startBtn = document.getElementById("startBtn");
@@ -14,10 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let score = 0;
   let playerName = "";
 
-  // הגדרת transition חלק לרקע הגוף
   document.body.style.transition = "background-color 1.5s ease";
-
-  updateLeaderboard();
 
   startBtn.addEventListener("click", () => {
     playerName = playerNameInput.value.trim();
@@ -74,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   });
 
-  stopBtn.addEventListener("click", () => {
+  stopBtn.addEventListener("click", async () => {
     if (!running) return;
 
     clearInterval(interval);
@@ -83,14 +105,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const finalTime = parseFloat(timerDisplay.textContent);
     let points = 0;
     let bgColor = "";
-    let resultTextColor = ""; // נבחר לפי מצב התוצאה
+    let resultTextColor = "";
 
     if (finalTime === 10.00) {
       points = 100;
       result.textContent = "בול! 🎯 100 נקודות!";
       result.className = "success score-anim";
-      bgColor = "#4CAF50"; // ירוק בהיר
-      resultTextColor = "#2e7d32"; // ירוק כהה לטקסט
+      bgColor = "#4CAF50";
+      resultTextColor = "#2e7d32";
     } else if (finalTime > 10.00 && finalTime <= 10.75) {
       if (finalTime <= 10.25) {
         points = 50;
@@ -101,21 +123,20 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       result.textContent = `תוצאה: ${finalTime} שניות – ${points} נקודות`;
       result.className = "score-mid";
-      bgColor = "#FFEB3B"; // צהוב
-      resultTextColor = "#b37400"; // כתום כהה/צהוב לטקסט
+      bgColor = "#FFEB3B";
+      resultTextColor = "#b37400";
     } else {
       result.textContent = `פספסת! ${finalTime} ❌`;
       result.className = "fail";
-      bgColor = "#F44336"; // אדום
-      resultTextColor = "#fff"; // לבן לטקסט על אדום
+      bgColor = "#F44336";
+      resultTextColor = "#fff";
     }
 
     score += points;
     scoreBox.textContent = score;
 
-    const bestScore = updatePlayerHighScore(playerName, score);
+    const bestScore = await updatePlayerHighScore(playerName, score);
     highScoreBox.textContent = bestScore;
-    updateLeaderboard();
 
     startBtn.disabled = false;
     stopBtn.disabled = true;
@@ -131,24 +152,41 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   });
 
-  function updatePlayerHighScore(name, currentScore) {
-    const saved = JSON.parse(localStorage.getItem("scores")) || {};
-    if (!saved[name] || currentScore > saved[name]) {
-      saved[name] = currentScore;
-      localStorage.setItem("scores", JSON.stringify(saved));
+  async function updatePlayerHighScore(name, currentScore) {
+    const userRef = doc(db, "scores", name);
+    const docSnap = await getDoc(userRef);
+
+    if (!docSnap.exists() || currentScore > docSnap.data().score) {
+      await setDoc(userRef, {
+        name: name,
+        score: currentScore
+      });
+      return currentScore;
     }
-    return saved[name];
+
+    return docSnap.data().score;
   }
 
-  function updateLeaderboard() {
-  const saved = JSON.parse(localStorage.getItem("scores")) || {};
-  const sorted = Object.entries(saved).sort((a, b) => b[1] - a[1]);
+  function updateLeaderboardLive() {
+    const scoresRef = collection(db, "scores");
 
-  leaderboardList.innerHTML = "";
-  sorted.forEach(([name, score], index) => {
-    const li = document.createElement("li");
-    li.textContent = `${index + 1}. ${name}: ${score} נק'`;
-    leaderboardList.appendChild(li);
-  });
-}
+    onSnapshot(scoresRef, (snapshot) => {
+      const scores = [];
+      snapshot.forEach(doc => {
+        scores.push(doc.data());
+      });
+
+      scores.sort((a, b) => b.score - a.score);
+
+      leaderboardList.innerHTML = "";
+      scores.forEach((entry, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${index + 1}. ${entry.name}: ${entry.score} נק'`;
+        leaderboardList.appendChild(li);
+      });
+    });
+  }
+
+  // קריאה בזמן אמת עם סנכרון
+  updateLeaderboardLive();
 });
